@@ -1,0 +1,104 @@
+{
+  "source_sha": "3e89973d424c789ea9bb08bc0039318c28e5d647",
+  "base_sha": "1c43bdcac7e4c7a66cdf48acf9e66ff7807b2c8e",
+  "allowed_changed_files": [
+    "test/integration/cli-erroring.test.js",
+    "test/integration/cli-json.test.js",
+    "test/integration/mock/config/erroring-threshold.json",
+    "test/unit/lib/pa11y-ci.test.js"
+  ],
+  "source_sha256": {
+    "lib/pa11y-ci.js": "115e5ac864bdceefe7e35b76fd72eba6df42549b651ae6b5943488562ecfc608",
+    "bin/pa11y-ci.js": "97508acf865ad7a47f0cff430b51b37d77927fc49bebcdab4d288d850ed176ba",
+    "package.json": "6ea2f75589f1f561e21f6550c5aec26f2bd9c7e0d50e933b4e7e61e67707f638",
+    "package-lock.json": "867f0c213b3447737dcfd238322226de54e4c3c0bcc4111888e4feccf085580d",
+    ".github/workflows/tests.yml": "fe1f50e116b26aebace86001e94186d5cb78dea296c7f5bd4088d7f130541833"
+  },
+  "suites": [
+    {
+      "name": "unit",
+      "expected_test_titles": [
+        "lib/pa11y-ci exports a function",
+        "lib/pa11y-ci has a `defaults` property",
+        "lib/pa11y-ci .defaults has a `concurrency` property",
+        "lib/pa11y-ci .defaults has a `log` property",
+        "lib/pa11y-ci .defaults has a `log.error` method",
+        "lib/pa11y-ci .defaults has a `log.info` method",
+        "lib/pa11y-ci .defaults has a `wrapWidth` property",
+        "lib/pa11y-ci .defaults has a `useIncognitoBrowserContext` property",
+        "lib/pa11y-ci .defaults has a cli reporter",
+        "lib/pa11y-ci pa11yCi(urls, options) returns a promise",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() defaults the options using `pa11yCi.defaults`",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() deletes the `log` and `reporters` option",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() creates an Async.js queue with the expected concurrency",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() assigns a drain callback to the Async queue",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() Runs the Pa11y test runner on each of the URLs",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() logs that the tests have started running",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() logs the number of errors for each URL, or if they fail to run",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() logs the pass/fail ratio",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() logs the errors for each URL that has some",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() resolves with an object",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() resolved object has a `total` property set to the total number of URLs processed",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() resolved object has a `passes` property set to the total number of URLs that passed the test",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() resolved object counts failed executions separately from accessibility errors",
+        "lib/pa11y-ci pa11yCi(urls, options) .then() resolved object has a `results` property set to an object where keys are URLs and values are their results",
+        "lib/pa11y-ci pa11yCi(urls, options) when all URLs pass the test .then() logs zero errors for each URL",
+        "lib/pa11y-ci pa11yCi(urls, options) when all URLs pass the test .then() logs the pass/fail ratio",
+        "lib/pa11y-ci pa11yCi(urls, options) when all URLs pass the test .then() never logs any errors",
+        "lib/pa11y-ci pa11yCi(urls, options) when all URLs pass the test .then() reports zero failed executions",
+        "lib/pa11y-ci execution failures reports zero failed executions when pages only have accessibility errors",
+        "lib/pa11y-ci execution failures counts every failed execution and still completes the other pages and reporters",
+        "lib/pa11y-ci execution failures retains a failed execution when a later attempt at the same URL passes",
+        "lib/pa11y-ci when URLs include additional configurations .then() Runs the Pa11y test runner on each of the URLs with configurations",
+        "lib/pa11y-ci when URLs include additional configurations .then() did not createBrowserContext",
+        "lib/pa11y-ci when URLs include additional configurations .then() closes the browser context after the test runner completes",
+        "lib/pa11y-ci when URLs include additional configurations .then() correctly logs the number of errors for the URL",
+        "lib/pa11y-ci when URLs include additional configurations .then() resolved object has a `results` property set to an object where keys are URLs and values are their results",
+        "lib/pa11y-ci when options specify useIncognitoBrowserContext: true .then() closes each incognito browser context created during test runner execution",
+        "lib/pa11y-ci when options specify useIncognitoBrowserContext: true .then() closes the browser context after the test runner completes",
+        "lib/pa11y-ci reporters calls the beforeAll method once",
+        "lib/pa11y-ci reporters calls the afterAll method once",
+        "lib/pa11y-ci reporters calls the begin method for each URL",
+        "lib/pa11y-ci reporters calls the results method for each URL",
+        "lib/pa11y-ci multiple reporters calls reporters results methods",
+        "lib/pa11y-ci multiple reporters calls option-reporter results with the correct options"
+      ],
+      "expected_failed_titles": [
+        "lib/pa11y-ci pa11yCi(urls, options) .then() resolved object counts failed executions separately from accessibility errors",
+        "lib/pa11y-ci pa11yCi(urls, options) when all URLs pass the test .then() reports zero failed executions",
+        "lib/pa11y-ci execution failures reports zero failed executions when pages only have accessibility errors",
+        "lib/pa11y-ci execution failures counts every failed execution and still completes the other pages and reporters",
+        "lib/pa11y-ci execution failures retains a failed execution when a later attempt at the same URL passes"
+      ]
+    },
+    {
+      "name": "integration",
+      "expected_test_titles": [
+        "pa11y-ci (with a single erroring URL) exits with 2",
+        "pa11y-ci (with a single erroring URL) outputs a result notice for each URL",
+        "pa11y-ci (with a single erroring URL) outputs error information",
+        "pa11y-ci (with a single erroring URL) outputs a total erroring notice",
+        "pa11y-ci (with multiple erroring URLs) exits with 2",
+        "pa11y-ci (with multiple erroring URLs) outputs a result notice for each URL",
+        "pa11y-ci (with multiple erroring URLs) outputs error information",
+        "pa11y-ci (with multiple erroring URLs) outputs a total erroring notice",
+        "pa11y-ci (with an erroring URL and a CLI threshold of 1) retains the execution error and exits with 2",
+        "pa11y-ci (with an erroring URL and a CLI threshold of 100) retains the execution error and exits with 2",
+        "pa11y-ci (with multiple erroring URLs and a CLI threshold of 100) attempts both pages, retains their execution errors and exits with 2",
+        "pa11y-ci (with an erroring URL and positive page and CLI thresholds) does not let either threshold excuse the failed execution",
+        "pa11y-ci (with the `--json` flag set) exits with 2 when execution fails even with accessibility errors below the CLI threshold",
+        "pa11y-ci (with the `--json` flag set) outputs the results as JSON",
+        "pa11y-ci (with JSON output for a passing URL) exits with 0 and reports zero failed executions"
+      ],
+      "expected_failed_titles": [
+        "pa11y-ci (with an erroring URL and a CLI threshold of 1) retains the execution error and exits with 2",
+        "pa11y-ci (with an erroring URL and a CLI threshold of 100) retains the execution error and exits with 2",
+        "pa11y-ci (with multiple erroring URLs and a CLI threshold of 100) attempts both pages, retains their execution errors and exits with 2",
+        "pa11y-ci (with an erroring URL and positive page and CLI thresholds) does not let either threshold excuse the failed execution",
+        "pa11y-ci (with the `--json` flag set) exits with 2 when execution fails even with accessibility errors below the CLI threshold",
+        "pa11y-ci (with the `--json` flag set) outputs the results as JSON",
+        "pa11y-ci (with JSON output for a passing URL) exits with 0 and reports zero failed executions"
+      ]
+    }
+  ]
+}
