@@ -1,4 +1,4 @@
-name: Pa11y CI 368 expected regression proof
+name: Pa11y CI 368 final verification
 
 on:
   push:
@@ -8,49 +8,58 @@ permissions:
   contents: read
 
 jobs:
-  expected-regressions:
+  lint:
     if: github.repository == 'KyPython/pa11y-ci'
-    name: Verify expected regressions against unchanged production
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
-      - name: Allow Chrome user namespaces
-        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
-
-      - name: Check out verification harness from this workflow commit
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ github.sha }}
-          path: verification
-          persist-credentials: false
-          sparse-checkout: .github/verification/pa11y-368
-
-      - name: Check out immutable tests-only contribution
-        uses: actions/checkout@v7
-        with:
-          ref: 3e89973d424c789ea9bb08bc0039318c28e5d647
-          path: source
-          fetch-depth: 0
+          ref: fd56d7f6668b45191522527c23d5dbdeac7c8165
           persist-credentials: false
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22.13.0
+          node-version: 22
+      - run: npm ci
+      - run: npm run lint
+
+  test:
+    if: github.repository == 'KyPython/pa11y-ci'
+    name: test on ${{ matrix.os }} with node ${{ matrix.node-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [22.13.0, 22, 24, 26]
+    steps:
+      - name: Normalise line-ending handling in Git
+        shell: bash
+        run: |
+          git config --global core.autocrlf false
+        if: runner.os == 'Windows'
+
+      - name: Disable AppArmor User Namespace Restrictions, required to open
+          Chrome on Ubuntu 23.10+ without --no-sandbox). See
+          https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md.
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+        if: runner.os == 'Linux'
+
+      - uses: actions/checkout@v7
+        with:
+          ref: fd56d7f6668b45191522527c23d5dbdeac7c8165
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
 
       - run: npm ci
-        working-directory: source
 
-      - name: Identify the locked Puppeteer browser
-        working-directory: source
-        run: node -e "console.log(require('puppeteer').executablePath())"
+      - name: Run Unit Tests & Coverage
+        run: |
+          npm run test-coverage
+          npm run verify-coverage
 
-      - name: Require exact expected failures and unchanged production
-        run: node verification/.github/verification/pa11y-368/verify-red.cjs source verification/.github/verification/pa11y-368/red-contract.json evidence
-
-      - name: Save regression evidence
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: pa11y-368-expected-regressions-3e89973d424c789ea9bb08bc0039318c28e5d647
-          path: evidence/
-          if-no-files-found: error
+      - name: Run Integration Tests
+        run: npm run test-integration
