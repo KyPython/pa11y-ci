@@ -1,0 +1,32 @@
+name: AI Governance
+
+# Calls the shared governance gate from KyPython/ai-governance.
+# Required status check on main: "ai-governance / verdict".
+# The reusable workflow is pinned to a commit SHA; bump it via a PR Ky approves.
+
+on:
+  pull_request:
+    # `edited` re-runs the gate when the PR title/body (issue reference) changes.
+    types: [opened, synchronize, reopened, edited]
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-governance-${{ github.ref }}
+  # Only new commits cancel an in-flight run; `edited` re-runs on the same SHA queue instead,
+  # so a cancelled run can never leave a failed verdict as the latest result.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action == 'synchronize' }}
+
+jobs:
+  ai-governance:
+    uses: KyPython/ai-governance/.github/workflows/governance.yml@bacf04c5dc635305b8424214cbbf1522ee99fba1 # main
+    with:
+      node-version: "22"
+      # require-tests: true
+      # extra-command: "pnpm validate:all"
+      # require-issue-reference: false
+      # systems-thinking-contract: auto
